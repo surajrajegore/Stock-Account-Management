@@ -1,22 +1,28 @@
 package com.bridgelabz;
 
 public class Account {
-    double accountBalance = 0;
+    static double accountBalance = 0;
+
+    public static double getAccountBalance() {
+        return accountBalance;
+    }
+
+    public static void setAccountBalance(double accountBalance) {
+        Account.accountBalance = accountBalance;
+    }
 
     void checkAccountBalance() {
         System.out.println("Account balance is: " + accountBalance);
     }
 
-    void creditAmount() {
-        System.out.println("Enter amount you would deposit");
-        double amount = Input.getDouble();
+    static void creditAmount(double amount) {
         accountBalance = accountBalance + amount;
         System.out.println(amount + "you have credited and your account balance is: " + amount);
     }
 
-    void debitAmount() {
+    static void debitAmount(double amount) {
         System.out.println("Enter the amount you would like to withdraw : ");
-        double amount = Input.getDouble();
+        amount = Input.getDouble();
         if (amount < accountBalance) {
             accountBalance = accountBalance - amount;
             System.out.println(amount + " debited and remaining banalce is " + accountBalance);

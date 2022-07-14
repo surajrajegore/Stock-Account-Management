@@ -3,45 +3,82 @@ package com.bridgelabz;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StockManager {
-    Input input = new Input();
+public class StockManager implements StockAccountService {
 
-    public void addStocks() {
-        double sumofAllStocks = 0;
-        double stockPrice = 0;
-        System.out.println("Enter Number of stocks You want to add");
-        int numberOfStocks = Input.getInt();
+    public double valueOf() {
+        System.out.println("Your account Balance is :" + Account.getAccountBalance());
+        return Account.getAccountBalance();
+    }
 
-        List<StockPortfolio> tempStock = StockList.getStocks();
-        for (int i = 0; i < numberOfStocks; i++) {
-            StockPortfolio stockPortfolio = new StockPortfolio();
+    public StockPortfolio findStock(String name) {
+        List<StockPortfolio> temp = StockList.getStocks();
 
-            System.out.println("Enter name of stock");
-            stockPortfolio.setStockName(Input.getString());
-
-            System.out.println("Enter How many Shares You want to buy");
-            stockPortfolio.setNumberOfShares(Input.getDouble());
-
-            System.out.println("Enter the price of per share");
-            stockPortfolio.setSharePrice(Input.getDouble());
-
-            stockPrice = stockPortfolio.getNumberOfShares() * stockPortfolio.getSharePrice();
-            stockPortfolio.setTotalSharePrice(stockPrice);
-
-            tempStock.add(stockPortfolio);
-            StockList.setStocks(tempStock);
-
-            sumofAllStocks  = sumofAllStocks + stockPrice;
-
+        for (StockPortfolio stock : temp) {
+            if (stock.getStockName().equals(name)) {
+                return stock;
+            }
         }
-        StockList.setTotalValue(sumofAllStocks);
+        return null;
+    }
+
+    public StockPortfolio createStock(String name) {
+        List<StockPortfolio> temp = StockList.getStocks();
+        System.out.println("Enter share value: ");
+        double priceOfShare = Input.getDouble();
+
+        StockPortfolio stock = new StockPortfolio();
+        stock.setStockName(name);
+        stock.setNumberOfShares(0);
+        stock.setSharePrice(priceOfShare);
+        temp.add(stock);
+
+        StockList.setStocks(temp);
+        return stock;
+    }
+
+    public void buyShare(double amount, String symbol) {
+        if (amount > Account.getAccountBalance()) {
+            System.out.println("Insufficient account balance please recharge your account.....");
+            return;
+        }
+        StockPortfolio portfolio = findStock(symbol);
+        if (portfolio == null) {
+            portfolio = createStock(symbol);
+        }
+        double numofShares = (amount / portfolio.getSharePrice());
+        double debitValue = numofShares * portfolio.getSharePrice();
+
+        Account.debitAmount(debitValue);
+
+        portfolio.setNumberOfShares(numofShares + portfolio.getNumberOfShares());
+        portfolio.setTotalSharePrice(portfolio.getNumberOfShares() * portfolio.getSharePrice());
 
     }
-    public void printStockDetails(){
+
+    public void sellShare(double amount, String symbol) {
+        StockPortfolio portfolio = findStock(symbol);
+        if (portfolio == null) {
+            System.out.println("stock is not available please try again....");
+            return;
+        }
+        double numofShares = (amount / portfolio.getSharePrice());
+        if (numofShares > portfolio.getNumberOfShares()) {
+            numofShares = portfolio.getNumberOfShares();
+        }
+        portfolio.setNumberOfShares(portfolio.getNumberOfShares() - numofShares);
+        double stockValue = portfolio.getNumberOfShares() * portfolio.getSharePrice();
+        portfolio.setTotalSharePrice(stockValue);
+
+        double creditValue = portfolio.getSharePrice() * numofShares;
+        Account.creditAmount(creditValue);
+    }
+
+
+    public void printStockDetails() {
         List<StockPortfolio> stockList = StockList.getStocks();
-        for (StockPortfolio stock :stockList){
+        for (StockPortfolio stock : stockList) {
             System.out.println(stock);
         }
-        System.out.println("total value of stock is:"+StockList.getTotalValue());
+        System.out.println("total value of stock is:" + StockList.getTotalValue());
     }
 }

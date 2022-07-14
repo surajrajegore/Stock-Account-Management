@@ -1,35 +1,53 @@
 package com.bridgelabz;
 
 public class StockAccountManagement {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         int choice = 0;
         System.out.println("Welcome to stock management program");
 
         StockManager stockManager = new StockManager();
-        Account account = new Account();
-        do{
-            System.out.println("Select the operation from below : " + "\n1.Add Stock" + "\n2.print stock report"+ "\n3.credit Amount" + "\n4.Debit Amount "+ "\n5.Exit From ");
+        do {
+            System.out.println("Select the option from below : " + "\n1.Buy Shares" + "\n2.Sell Shares" + "\n3.Credit Amount" + "\n4.Debit Amount\n" + "5.Print Account Balance\n" + "6.Print Portfolio details\n" + "\n7.Exit program");
             choice = Input.getInt();
+            double amount= 0;
+            String symbol;
 
-            switch (choice){
+            switch (choice) {
                 case 1:
-                    stockManager.addStocks();
+                    System.out.println("Enter which Stock you want to buy : ");
+                    symbol = Input.getString();
+                    System.out.println("Enter how much you would like to spend on Share : ");
+                    amount = Input.getDouble();
+                    stockManager.buyShare(amount, symbol);
                     break;
                 case 2:
-                    stockManager.printStockDetails();
+                    System.out.println("Enter which Stock you want to sell : ");
+                    symbol = Input.getString();
+                    System.out.println("Enter how much you would like to spend on Share : ");
+                    double numberOfShares = Input.getDouble();
+                    stockManager.buyShare(amount, symbol);
                     break;
                 case 3:
-                    account.creditAmount();
+                    System.out.println("Enter the amount to deposit in yout account : ");
+                    amount = Input.getDouble();
+                    Account.creditAmount(amount);
                     break;
                 case 4:
-                    account.debitAmount();
+                    Account.debitAmount(amount);
+                    break;
                 case 5:
+                    stockManager.valueOf();
+                    break;
+                case 6:
+                    stockManager.printStockDetails();
+                    break;
+                case 7:
                     System.out.println("Bye....");
                     break;
                 default:
                     System.out.println("Enter Valid operation");
             }
-        }while (choice != 5);
+        } while (choice != 7);
     }
 
 }
